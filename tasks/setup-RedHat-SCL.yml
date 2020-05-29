@@ -1,0 +1,14 @@
+---
+- name: Ensure MySQL packages are installed.
+  yum:
+    name: "{{ mysql_packages }}"
+    state: present
+    enablerepo: "{{ mysql_enablerepo | default(omit, true) }}"
+  register: rh_mysql_install_packages
+
+- name: Setup autoload of MySQL software collections
+  template:
+    src: "mysql.sh.j2"
+    dest: "/etc/profile.d/{{ mysql_scl_package }}.sh"
+    mode: 0644
+  when: mysql_use_scl

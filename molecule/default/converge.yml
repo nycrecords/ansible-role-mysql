@@ -4,16 +4,20 @@
   become: true
 
   vars:
-    mysql_python_package_debian: python3-mysqldb
+    # Role: rhsm
+    rhsm_username: "{{ lookup('env', 'RHSM_USERNAME') }}"
+    rhsm_password: "{{ lookup('env', 'RHSM_PASSWORD') }}"
+    rhsm_auto_attach: true
+    rhsm_server_proxy_hostname: "{{ lookup('env', 'http_proxy_hostname') }}"
+    rhsm_server_proxy_port: "{{ lookup('env', 'http_proxy_port') }}"
+    rhsm_server_proxy_user: "{{ lookup('env', 'http_proxy_user') }}"
+    rhsm_server_proxy_password: "{{ lookup('env', 'http_proxy_password') }}"
+    rhsm_consumer_name: "nycrecords_{{ '%Y%m%d_%H%M%s' | strftime(ansible_date_time.epoch) }}"
+
+    # Role: mysql
+    mysql_scl_package: rh-mariadb103
+    mysql_use_scl: true
 
   roles:
-    - role: geerlingguy.mysql
-
-  post_tasks:
-    - name: Make sure we can connect to MySQL via Unix socket.
-      command: "mysql -u root -proot -e 'show databases;'"
-      changed_when: false
-
-    - name: Make sure we can connect to MySQL via TCP.
-      command: "mysql -u root -proot -h 127.0.0.1 -e 'show databases;'"
-      changed_when: false
+    - role: nycrecords.rhsm
+    # - role: ansible-role-mysql
