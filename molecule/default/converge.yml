@@ -20,4 +20,4 @@
 
   roles:
     - role: nycrecords.rhsm
-    # - role: ansible-role-mysql
+    - role: ansible-role-mysql
