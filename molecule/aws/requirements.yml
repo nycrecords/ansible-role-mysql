@@ -3,5 +3,3 @@
   version: 1.0.0
 - src: nycrecords.rhsm
   version: 2.1.0
-- src: nycrecords.nginx
-  version: 3.1.0

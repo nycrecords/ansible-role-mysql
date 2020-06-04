@@ -4,53 +4,26 @@
   become: true
 
   vars:
-    # Role: yum_config_manager
-    repositories:
-      enabled:
-        - rhui-REGION-rhel-server-rhscl
-        - rhui-REGION-rhel-server-debug-rhscl
+    # Role: rhsm
+    rhsm_username: "{{ lookup('env', 'RHSM_USERNAME') }}"
+    rhsm_password: "{{ lookup('env', 'RHSM_PASSWORD') }}"
+    rhsm_auto_attach: true
+    rhsm_server_proxy_hostname: "{{ lookup('env', 'http_proxy_hostname') }}"
+    rhsm_server_proxy_port: "{{ lookup('env', 'http_proxy_port') }}"
+    rhsm_server_proxy_user: "{{ lookup('env', 'http_proxy_user') }}"
+    rhsm_server_proxy_password: "{{ lookup('env', 'http_proxy_password') }}"
+    rhsm_consumer_name: "nycrecords_{{ '%Y%m%d_%H%M%s' | strftime(ansible_date_time.epoch) }}"
 
-    # Role: nginx
-    nginx_yum_repo_enabled: false
-    nginx_use_scl: true
-    nginx_package_name: rh-nginx18
-    nginx_service_name: rh-nginx18-nginx
-    nginx_conf_path: /etc/opt/rh/rh-nginx18/nginx/conf.d
-    nginx_conf_file_path: /etc/opt/rh/rh-nginx18/nginx/nginx.conf
-    nginx_mime_file_path: /etc/opt/rh/rh-nginx18/nginx/mime.types
-    nginx_pid_file: /var/opt/rh/rh-nginx18/run/nginx/nginx.pid
-    nginx_access_log: "/var/opt/rh/rh-nginx18/log/nginx/access.log main buffer=16k flush=2m"
-    nginx_error_log: "/var/opt/rh/rh-nginx18/log/nginx/error.log warn"
-    nginx_vhost_path: /etc/opt/rh/rh-nginx18/nginx/conf.d
-    nginx_default_vhost_path: /etc/opt/rh/rh-nginx18/nginx/conf.d/default.conf
-    nginx_vhosts:
-      - listen: "80"
-        server_name: "0.0.0.0"
-        root: "/opt/rh/rh-nginx18/root/usr/share/nginx/html"
-        index: "index.html index.htm"
-        extra_parameters: |
-          location ~* \.php$ {
-            fastcgi_pass    127.0.0.1:9000;
-            include         fastcgi_params;
-            fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-            fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
-          }
-
-    # Role: php
-    php_install_from_source: false
-    php_scl_package: rh-php72
-    php_use_scl: true
-    php_enable_php_fpm: true
-    php_webserver_daemon: "rh-nginx18-nginx"
+    # Role: mysql
+    mysql_scl_package: rh-mariadb103
+    mysql_use_scl: true
+    mysql_databases:
+      - name: example
+    mysql_users:
+      - name: jdoe
+        password: password
+        priv: "example.*:ALL"
 
   roles:
     - role: nycrecords.rhsm
-    - role: nycrecords.nginx
-    - role: ansible-role-php
-
-  post_tasks:
-    - name: Copy PHP info file
-      copy:
-        src: ../resources/test.php
-        dest: /opt/rh/rh-nginx18/root/usr/share/nginx/html/test.php
-
+    - role: ansible-role-mysql
