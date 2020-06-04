@@ -17,6 +17,12 @@
     # Role: mysql
     mysql_scl_package: rh-mariadb103
     mysql_use_scl: true
+    mysql_databases:
+      - name: example
+    mysql_users:
+      - name: jdoe
+        password: password
+        priv: "example.*:ALL"
 
   roles:
     - role: nycrecords.rhsm
