@@ -4,7 +4,14 @@
 
 # Setup/install tasks.
 - include_tasks: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
+  when:
+    - ansible_os_family == 'RedHat'
+    - not mysql_use_scl
+
+- include_tasks: setup-RedHat-SCL.yml
+  when:
+    - ansible_os_family == 'RedHat'
+    - mysql_use_scl
 
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'

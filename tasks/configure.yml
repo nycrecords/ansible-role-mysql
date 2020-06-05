@@ -4,6 +4,17 @@
   register: mysql_cli_version
   changed_when: false
   check_mode: false
+  when: not mysql_use_scl
+
+- name: Get MySQL version (RedHat SCL).
+  shell: |
+    scl enable {{ mysql_scl_package }} -- mysql --version
+  register: mysql_cli_version
+  changed_when: false
+  check_mode: false
+  when:
+    - ansible_os_family == 'RedHat'
+    - mysql_use_scl
 
 - name: Copy my.cnf global MySQL configuration.
   template:
