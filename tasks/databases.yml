@@ -6,3 +6,5 @@
     encoding: "{{ item.encoding | default('utf8') }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ mysql_databases }}"
+  tags:
+    - configure_databases
